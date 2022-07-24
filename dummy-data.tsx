@@ -1,12 +1,4 @@
-type dummyEventsType = {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  image: string;
-  isFeatured: boolean;
-};
+import { dummyEventsType } from './src/types/event';
 
 const DUMMY_EVENTS: dummyEventsType[] = [
   {
