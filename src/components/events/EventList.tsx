@@ -1,5 +1,6 @@
 import EventItem from './EventItem';
 import { dummyEventsType } from '../../types/event';
+import classes from './EventList.module.css';
 
 type EventListProps = {
   events: dummyEventsType[];
@@ -7,7 +8,7 @@ type EventListProps = {
 
 export default function EventList({ events }: EventListProps) {
   return (
-    <ul>
+    <ul className={classes.list}>
       {events.map((event) => (
         <EventItem
           key={event.id}

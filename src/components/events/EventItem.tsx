@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import classes from './EventItem.module.css';
 
 type EventItemProps = {
   title: string;
@@ -25,19 +26,19 @@ export default function EventItem({
   const exploreLink = `/events/${id}`;
 
   return (
-    <li>
+    <li className={classes.item}>
       <img src={'/' + image} alt="" />
       <div>
-        <div>
+        <div className={classes.summary}>
           <h2>{title}</h2>
-          <div>
+          <div className={classes.date}>
             <time>{humanReadableDate}</time>
           </div>
-          <div>
+          <div className={classes.address}>
             <time>{formattedAddress}</time>
           </div>
         </div>
-        <div>
+        <div className={classes.actions}>
           <Link href={exploreLink}>
             <a>Explore Event</a>
           </Link>
