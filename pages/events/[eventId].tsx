@@ -6,7 +6,7 @@ import {
   EventLogistics,
   EventContent,
 } from '../../src/components/eventDetail';
-import ErrorAlert from '../../src/components/ui/ErrorAlert';
+import { ErrorAlert } from '../../src/components/ui';
 
 export default function EventDetail() {
   const router = useRouter();

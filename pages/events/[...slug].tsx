@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import { getFilteredEvents } from '../../dummy-data';
 import EventList from '../../src/components/events/EventList';
 import ResultsTitle from '../../src/components/events/ResultsTitle';
-import Button from '../../src/components/ui/Button';
-import ErrorAlert from '../../src/components/ui/ErrorAlert';
+import { Button, ErrorAlert } from '../../src/components/ui';
 
 function FilteredEvents() {
   const router = useRouter();

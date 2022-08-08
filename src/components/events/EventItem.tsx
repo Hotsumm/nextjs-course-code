@@ -1,5 +1,5 @@
 import classes from './EventItem.module.css';
-import Button from '../ui/Button';
+import { Button } from '../ui';
 import { AddressIcon, ArrowRightIcon, DateIcon } from '../icons';
 
 type EventItemProps = {
