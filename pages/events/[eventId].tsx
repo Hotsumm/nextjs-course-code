@@ -6,6 +6,7 @@ import {
   EventLogistics,
   EventContent,
 } from '../../src/components/eventDetail';
+import ErrorAlert from '../../src/components/ui/ErrorAlert';
 
 export default function EventDetail() {
   const router = useRouter();
@@ -13,7 +14,12 @@ export default function EventDetail() {
   const { eventId } = router.query as { eventId: string };
   const event = getEventById(eventId);
 
-  if (!event) return <p>No event found!</p>;
+  if (!event)
+    return (
+      <ErrorAlert>
+        <p>No event found!</p>
+      </ErrorAlert>
+    );
 
   return (
     <Fragment>

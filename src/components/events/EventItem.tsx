@@ -29,7 +29,7 @@ export default function EventItem({
   return (
     <li className={classes.item}>
       <img src={'/' + image} alt="" />
-      <div>
+      <div className={classes.content}>
         <div className={classes.summary}>
           <h2>{title}</h2>
           <div className={classes.date}>
