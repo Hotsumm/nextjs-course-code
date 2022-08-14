@@ -1,4 +1,4 @@
-export type dummyEventsType = {
+export type EventsType = {
   id: string;
   title: string;
   description: string;

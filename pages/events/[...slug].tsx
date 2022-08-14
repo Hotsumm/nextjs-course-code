@@ -1,11 +1,15 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getFilteredEvents } from '../../dummy-data';
+import { getFilteredEvents } from '../../src/api/eventApi';
 import EventList from '../../src/components/events/EventList';
 import ResultsTitle from '../../src/components/events/ResultsTitle';
 import { Button, ErrorAlert } from '../../src/components/ui';
+import { EventsType } from '../../src/types/event';
 
 function FilteredEvents() {
+  const [filteredEvents, setFilteredEvents] = useState<EventsType[] | null>(
+    null
+  );
   const router = useRouter();
   const filterData = router.query.slug as string[];
 
@@ -28,14 +32,20 @@ function FilteredEvents() {
     !checkDateMonth(numMonth)
   );
 
-  const filteredEvents = getFilteredEvents({
-    year: numYear,
-    month: numMonth,
-  });
-
   const isFilteredEvents = !(!filteredEvents || filteredEvents.length === 0);
 
   const date = new Date(numYear, numMonth - 1);
+
+  useEffect(() => {
+    const fetchFilteredEvents = async () => {
+      const data = await getFilteredEvents({
+        year: numYear,
+        month: numMonth,
+      });
+      setFilteredEvents(data);
+    };
+    fetchFilteredEvents();
+  }, []);
 
   return (
     <Fragment>

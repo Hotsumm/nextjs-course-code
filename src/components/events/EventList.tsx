@@ -1,9 +1,9 @@
 import EventItem from './EventItem';
-import { dummyEventsType } from '../../types/event';
+import { EventsType } from '../../types/event';
 import classes from './EventList.module.css';
 
 type EventListProps = {
-  events: dummyEventsType[];
+  events: EventsType[];
 };
 
 export default function EventList({ events }: EventListProps) {
