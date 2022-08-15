@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
 import { getFeaturedEvents } from '../src/api/eventApi';
 import EventList from '../src/components/events/EventList';
-import { transformEventsData } from '../src/utils/transformEvents';
 
-export default function HomePage() {
-  const [featureEvents, setFeatureEvents] = useState(null);
+export default function HomePage({ featureEvents }) {
+  return (
+    <div>
+      <EventList events={featureEvents} />
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const fetchFeaturedEvents = async () => {
-      const data = await getFeaturedEvents();
-      setFeatureEvents(data);
-    };
-    fetchFeaturedEvents();
-  }, []);
-
-  return <div>{featureEvents && <EventList events={featureEvents} />}</div>;
+export async function getStaticProps() {
+  const data = await getFeaturedEvents();
+  return {
+    props: { featureEvents: data },
+  };
 }

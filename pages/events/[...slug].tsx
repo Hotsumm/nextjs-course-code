@@ -1,28 +1,75 @@
-import { Fragment, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { Fragment } from 'react';
 import { getFilteredEvents } from '../../src/api/eventApi';
 import EventList from '../../src/components/events/EventList';
 import ResultsTitle from '../../src/components/events/ResultsTitle';
 import { Button, ErrorAlert } from '../../src/components/ui';
 import { EventsType } from '../../src/types/event';
 
-function FilteredEvents() {
-  const [filteredEvents, setFilteredEvents] = useState<EventsType[] | null>(
-    null
-  );
-  const router = useRouter();
-  const filterData = router.query.slug as string[];
+type FilteredEventsProps = {
+  filteredEvents?: EventsType[];
+  isError?: boolean;
+  dateObj?: {
+    numYear: number;
+    numMonth: number;
+  };
+};
 
-  if (!filterData) {
-    return <p className="center">Loading...</p>;
+export default function FilteredEvents({
+  isError,
+  filteredEvents,
+  dateObj,
+}: FilteredEventsProps) {
+  //const router = useRouter();
+  //const filterData = router.query.slug as string[];
+
+  // if (!filterData) {
+  //   return <p className="center">Loading...</p>;
+  // }
+
+  //const [filteredYear, filteredMonth] = filterData;
+
+  if (isError) {
+    return (
+      <ErrorAlert>
+        <p>Invalid filter. please adjust your values</p>
+        <div className="center">
+          <Button link="/events">Show All Events</Button>
+        </div>
+      </ErrorAlert>
+    );
   }
-  const [filteredYear, filteredMonth] = filterData;
+
+  const isFilteredEvents = !(!filteredEvents || filteredEvents.length === 0);
+
+  if (!isFilteredEvents) {
+    return (
+      <ErrorAlert>
+        <p>No events found for the chosen filter!</p>
+      </ErrorAlert>
+    );
+  }
+
+  const date = new Date(dateObj.numYear, dateObj.numMonth - 1);
+
+  return (
+    <Fragment>
+      <Fragment>
+        <ResultsTitle date={date} />
+        <EventList events={filteredEvents} />
+      </Fragment>
+    </Fragment>
+  );
+}
+
+export async function getServerSideProps(context) {
+  const { slug } = context.query;
+
+  const [filteredYear, filteredMonth] = slug;
 
   const numYear = Number(filteredYear);
   const numMonth = Number(filteredMonth);
 
   const checkDateYear = (year: number): boolean => year > 2020 && year < 2031;
-
   const checkDateMonth = (month: number): boolean => month > 0 && month < 13;
 
   const isValidFilter = !(
@@ -32,44 +79,19 @@ function FilteredEvents() {
     !checkDateMonth(numMonth)
   );
 
-  const isFilteredEvents = !(!filteredEvents || filteredEvents.length === 0);
-
-  const date = new Date(numYear, numMonth - 1);
-
-  useEffect(() => {
-    const fetchFilteredEvents = async () => {
-      const data = await getFilteredEvents({
-        year: numYear,
-        month: numMonth,
-      });
-      setFilteredEvents(data);
+  if (!isValidFilter) {
+    return {
+      props: { isError: true },
     };
-    fetchFilteredEvents();
-  }, []);
+  }
 
-  return (
-    <Fragment>
-      {isValidFilter ? (
-        isFilteredEvents ? (
-          <Fragment>
-            <ResultsTitle date={date} />
-            <EventList events={filteredEvents} />
-          </Fragment>
-        ) : (
-          <ErrorAlert>
-            <p>No events found for the chosen filter!</p>
-          </ErrorAlert>
-        )
-      ) : (
-        <ErrorAlert>
-          <p>Invalid filter. please adjust your values</p>
-          <div className="center">
-            <Button link="/events">Show All Events</Button>
-          </div>
-        </ErrorAlert>
-      )}
-    </Fragment>
-  );
+  const dateObj = { numYear, numMonth };
+  const data = await getFilteredEvents({ year: numYear, month: numMonth });
+
+  return {
+    props: {
+      filteredEvents: data,
+      dateObj,
+    },
+  };
 }
-
-export default FilteredEvents;

@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Fragment } from 'react';
-import { useRouter } from 'next/router';
-import { getEventById } from '../../src/api/eventApi';
+import { getAllEvents, getEventById } from '../../src/api/eventApi';
 import {
   EventSummary,
   EventLogistics,
@@ -10,19 +8,11 @@ import {
 import { ErrorAlert } from '../../src/components/ui';
 import { EventsType } from '../../src/types/event';
 
-export default function EventDetail() {
-  const [event, setEvent] = useState<EventsType | null>(null);
-  const router = useRouter();
-  const { eventId } = router.query as { eventId: string };
+type EventDetailProps = {
+  event: EventsType;
+};
 
-  useEffect(() => {
-    const fetchEventById = async () => {
-      const data = await getEventById(eventId);
-      setEvent(data);
-    };
-    fetchEventById();
-  }, []);
-
+export default function EventDetail({ event }: EventDetailProps) {
   if (!event)
     return (
       <ErrorAlert>
@@ -44,4 +34,28 @@ export default function EventDetail() {
       </EventContent>
     </Fragment>
   );
+}
+
+export async function getStaticPaths() {
+  const events = await getAllEvents();
+  const paths = events.map((event) => ({ params: { eventId: event.id } }));
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+}
+
+export async function getStaticProps(context) {
+  const {
+    params: { eventId },
+  } = context;
+  const data: EventsType = await getEventById(eventId);
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return { props: { event: data } };
 }
