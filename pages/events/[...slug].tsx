@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
+import MetaEvent from '../../src/components/events/MetaEvent';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { getAllEvents, getFilteredEvents } from '../../src/api/eventApi';
@@ -27,8 +28,7 @@ export default function FilteredEvents() {
 
   useEffect(() => {
     if (data) {
-      const transformEvents: EventsType[] = transformEventsData(data);
-      setLoadedEvents(transformEvents);
+      setLoadedEvents(data);
     }
   }, [data]);
 
@@ -101,6 +101,10 @@ export default function FilteredEvents() {
 
   return (
     <Fragment>
+      <MetaEvent
+        title="Filtered Events"
+        description={`All events for ${numMonth}/${numYear}`}
+      />
       <ResultsTitle date={date} />
       <EventList events={filteredEvents} />
     </Fragment>

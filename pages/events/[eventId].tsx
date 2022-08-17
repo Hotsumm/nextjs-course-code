@@ -7,6 +7,7 @@ import {
 } from '../../src/components/eventDetail';
 import { ErrorAlert } from '../../src/components/ui';
 import { EventsType } from '../../src/types/event';
+import MetaEvent from '../../src/components/events/MetaEvent';
 
 type EventDetailProps = {
   event: EventsType;
@@ -22,6 +23,7 @@ export default function EventDetail({ event }: EventDetailProps) {
 
   return (
     <Fragment>
+      <MetaEvent title={event.title} />
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}
