@@ -8,6 +8,7 @@ import {
 import { ErrorAlert } from '../../src/components/ui';
 import { EventsType } from '../../src/types/event';
 import MetaEvent from '../../src/components/events/MetaEvent';
+import { Comments } from '../../src/components/input';
 
 type EventDetailProps = {
   event: EventsType;
@@ -34,6 +35,7 @@ export default function EventDetail({ event }: EventDetailProps) {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments />
     </Fragment>
   );
 }
