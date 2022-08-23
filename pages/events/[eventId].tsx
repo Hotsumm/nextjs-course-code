@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { GetStaticPropsContext } from 'next';
 import { getAllEvents, getEventById } from '../../src/api/eventApi';
 import {
   EventSummary,
@@ -23,7 +23,7 @@ export default function EventDetail({ event }: EventDetailProps) {
     );
 
   return (
-    <Fragment>
+    <>
       <MetaEvent title={event.title} />
       <EventSummary title={event.title} />
       <EventLogistics
@@ -35,8 +35,8 @@ export default function EventDetail({ event }: EventDetailProps) {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
-      <Comments />
-    </Fragment>
+      <Comments eventId={event.id} />
+    </>
   );
 }
 
@@ -49,11 +49,11 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps(context) {
+export async function getStaticProps(context: GetStaticPropsContext) {
   const {
     params: { eventId },
-  } = context;
-  const data: EventsType = await getEventById(eventId);
+  }: any = context;
+  const data = (await getEventById(eventId)) as EventsType;
 
   if (!data) {
     return {

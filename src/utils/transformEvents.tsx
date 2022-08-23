@@ -1,4 +1,4 @@
-export const transformEventsData = (data) => {
+export const transformEventsData = (data: any) => {
   const transformEvents = [];
   for (const key in data) {
     transformEvents.push({

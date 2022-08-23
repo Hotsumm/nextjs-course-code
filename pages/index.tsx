@@ -1,8 +1,13 @@
 import { getFeaturedEvents } from '../src/api/eventApi';
 import EventList from '../src/components/events/EventList';
 import { NewsletterRegistration } from '../src/components/input';
+import { EventsType } from '../src/types/event';
 
-export default function HomePage({ featureEvents }) {
+type HomePageProps = {
+  featureEvents: EventsType[];
+};
+
+export default function HomePage({ featureEvents }: HomePageProps) {
   return (
     <div>
       <NewsletterRegistration />

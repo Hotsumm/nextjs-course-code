@@ -1,14 +1,19 @@
 import { useRef, useState } from 'react';
 import classes from './NewComment.module.css';
+import { CommentType } from '../../types/comment';
 
-export default function NewComment(props) {
+type NewCommentProps = {
+  onAddComment: (commentData: CommentType) => void;
+};
+
+export default function NewComment({ onAddComment }: NewCommentProps) {
   const [isInvalid, setIsInvalid] = useState(false);
 
   const emailInputRef = useRef<HTMLInputElement | null>(null);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const commentInputRef = useRef<HTMLTextAreaElement | null>(null);
 
-  function sendCommentHandler(event) {
+  function sendCommentHandler(event: any) {
     event.preventDefault();
     if (
       !emailInputRef.current ||
@@ -34,7 +39,7 @@ export default function NewComment(props) {
       return;
     }
 
-    props.onAddComment({
+    onAddComment({
       email: enteredEmail,
       name: enteredName,
       text: enteredComment,

@@ -3,17 +3,20 @@ import { useState } from 'react';
 import CommentList from './CommentList';
 import NewComment from './NewComment';
 import classes from './Comments.module.css';
+import { CommentType } from '../../types/comment';
 
-export default function Comments(props) {
-  const { eventId } = props;
+type CommentsProps = {
+  eventId: string;
+};
 
+export default function Comments({ eventId }: CommentsProps) {
   const [showComments, setShowComments] = useState(false);
 
   function toggleCommentsHandler() {
     setShowComments((prevStatus) => !prevStatus);
   }
 
-  function addCommentHandler(commentData) {
+  function addCommentHandler(commentData: CommentType) {
     // send data to API
   }
 
