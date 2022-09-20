@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import classes from './NewComment.module.css';
-import { CommentType } from '../../types/comment';
+import { CommentDataType } from '../../types/comment';
 
 type NewCommentProps = {
-  onAddComment: (commentData: CommentType) => void;
+  onAddComment: (commentData: CommentDataType) => void;
 };
 
 export default function NewComment({ onAddComment }: NewCommentProps) {
@@ -63,7 +63,7 @@ export default function NewComment({ onAddComment }: NewCommentProps) {
         <textarea id="comment" rows={5} ref={commentInputRef}></textarea>
       </div>
       {isInvalid && <p>Please enter a valid email address and comment!</p>}
-      <button>Submit</button>
+      <button onClick={sendCommentHandler}>Submit</button>
     </form>
   );
 }
