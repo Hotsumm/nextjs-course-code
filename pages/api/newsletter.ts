@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { MongoClient } from 'mongodb';
+import { connectMongoDB, insertDocument } from '../../helpers/db';
 
-const URL =
-  'mongodb+srv://hotsumm:SP5KlctDgWmExOzR@cluster0.gh1i0kd.mongodb.net/?retryWrites=true&w=majority';
-const DB_NAME = 'newletter';
+const DB_NAME = 'events';
+const COLLECTION_NAME = 'newsletter';
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,20 +11,22 @@ export default async function handler(
   if (req.method === 'POST') {
     const { email }: any = req.body;
 
-    const client = new MongoClient(URL);
-    await client.connect();
-    console.log('Connected successfully to server');
-    const db = client.db(DB_NAME);
-    const collection = db.collection('emails');
-
+    let client;
     try {
-      await collection.insertOne({ email });
+      client = await connectMongoDB();
     } catch (error) {
-      console.log(error);
-    } finally {
-      client.close();
+      res.status(500).json({ message: 'Connecting to the database failed!' });
+      return;
     }
 
-    res.status(201).json({ message: '등록 성공' });
+    try {
+      await insertDocument(client, DB_NAME, COLLECTION_NAME, email);
+      client.close();
+    } catch (error) {
+      res.status(500).json({ message: 'Inserting data failed!' });
+      return;
+    }
+
+    res.status(201).json({ message: 'Signed up!' });
   }
 }

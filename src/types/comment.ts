@@ -5,7 +5,9 @@ export type CommentDataType = {
 };
 
 export type CommentType = {
-  id: string;
+  eventId: string;
+  _id: string;
+  email: string;
   name: string;
   text: string;
 };

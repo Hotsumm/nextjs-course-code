@@ -4,7 +4,7 @@ import classes from './NewsletterRegistration.module.css';
 export default function NewsletterRegistration() {
   const emailRef = useRef<HTMLInputElement | null>(null);
 
-  function registrationHandler(event: any) {
+  async function registrationHandler(event: any) {
     event.preventDefault();
     if (!emailRef.current) return;
     const email = emailRef.current.value;
@@ -12,16 +12,21 @@ export default function NewsletterRegistration() {
     if (!isValidateEmail(email))
       return alert('이메일을 정확하게 입력해주세요.');
 
-    fetch('/api/newsletter', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data.message))
-      .catch((error) => console.log(error));
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      console.log(data.message);
+    } catch (error: any) {
+      console.log(error.message);
+      alert('에러가 발생하였습니다.');
+    }
   }
 
   function isValidateEmail(email: string): boolean {

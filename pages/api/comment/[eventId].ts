@@ -1,23 +1,68 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import {
+  connectMongoDB,
+  getDocument,
+  insertDocument,
+} from '../../../helpers/db';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { commentData } = req.body;
+const DB_NAME = 'events';
+const COLLECTION_NAME = 'comments';
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const eventId = req.query.eventId;
+
+  let client;
+  try {
+    client = await connectMongoDB();
+  } catch (error) {
+    res.status(500).json({ message: 'Connecting to the database failed!' });
+    return;
+  }
+
   if (req.method === 'POST') {
-    const newComment = {
-      id: new Date().toISOString(),
-      text: commentData.text,
-      name: commentData.name,
+    const { email, text, name } = req.body.commentData;
+    const newComment: any = {
+      eventId,
+      email,
+      text,
+      name,
     };
-    res.status(201).json({ newComment });
+
+    let result;
+    try {
+      result = await insertDocument(
+        client,
+        DB_NAME,
+        COLLECTION_NAME,
+        newComment
+      );
+      newComment._id = result.insertedId;
+      res.status(201).json({ message: 'added comment', newComment });
+    } catch (error) {
+      res.status(500).json({ message: 'Inseting comment failed!' });
+      client.close();
+      return;
+    }
   }
 
   if (req.method === 'GET') {
-    const commentList = [
-      { id: 'c1', text: 'My comment is amazing!', name: 'Maximilian' },
-      { id: 'c2', text: 'Hello!', name: 'Hotsumm' },
-      { id: 'c3', text: 'I am Levi', name: 'Levi' },
-    ];
-
-    res.status(201).json({ commentList });
+    try {
+      const commentList = await getDocument(
+        client,
+        DB_NAME,
+        COLLECTION_NAME,
+        {
+          _id: -1,
+        },
+        { eventId: eventId }
+      );
+      res.status(201).json({ commentList });
+    } catch (error) {
+      res.status(500).json({ message: 'Getting comments failed!' });
+    }
   }
+  client.close();
 }

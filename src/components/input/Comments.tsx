@@ -13,35 +13,42 @@ export default function Comments({ eventId }: CommentsProps) {
   const [showComments, setShowComments] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-  const [comments, setComments] = useState<CommentType[] | null>(null);
+  const [comments, setComments] = useState<CommentType[]>([]);
 
   function toggleCommentsHandler() {
     setShowComments((prevStatus) => !prevStatus);
   }
 
-  function addCommentHandler(commentData: CommentDataType) {
-    fetch(`/api/comment/${eventId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ commentData }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!comments) return;
-        setComments([...comments, data.newComment]);
-      })
-      .catch((error) => setIsError(error));
+  async function addCommentHandler(commentData: CommentDataType) {
+    try {
+      const response = await fetch(`/api/comment/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentData }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      if (!comments) return;
+      setComments([...comments, data.newComment]);
+    } catch (error: any) {
+      console.log(error.message);
+      alert('댓글 작성에 실패하였습니다.');
+    }
   }
 
   const fetchComments = useCallback(async () => {
     try {
       const response: any = await fetch(`/api/comment/${eventId}`);
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
       const commentList: CommentType[] = data.commentList;
       setComments(commentList);
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.message);
       setIsError(true);
     }
     setIsLoading(false);
@@ -59,7 +66,7 @@ export default function Comments({ eventId }: CommentsProps) {
         {showComments ? 'Hide' : 'Show'} Comments
       </button>
       {showComments && <NewComment onAddComment={addCommentHandler} />}
-      {showComments && comments && (
+      {showComments && (
         <CommentList
           isLoading={isLoading}
           isError={isError}
