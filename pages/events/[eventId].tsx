@@ -8,7 +8,7 @@ import {
 import { ErrorAlert } from '../../src/components/ui';
 import { EventsType } from '../../src/types/event';
 import MetaEvent from '../../src/components/events/MetaEvent';
-import { Comments } from '../../src/components/input';
+import { Comments } from '../../src/components/eventComment';
 
 type EventDetailProps = {
   event: EventsType;

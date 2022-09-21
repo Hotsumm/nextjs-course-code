@@ -1,6 +1,6 @@
 import { getFeaturedEvents } from '../src/api/eventApi';
 import EventList from '../src/components/events/EventList';
-import { NewsletterRegistration } from '../src/components/input';
+import { NewsletterRegistration } from '../src/components/newsletter';
 import { EventsType } from '../src/types/event';
 
 type HomePageProps = {
