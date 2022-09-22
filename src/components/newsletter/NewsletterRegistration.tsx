@@ -1,7 +1,10 @@
-import { ReactElement, useRef } from 'react';
+import { useRef, useContext } from 'react';
 import classes from './NewsletterRegistration.module.css';
+import NotificationContext from '../../../store/NotificationContext';
 
 export default function NewsletterRegistration() {
+  const { showNotification, hideNotification } =
+    useContext(NotificationContext);
   const emailRef = useRef<HTMLInputElement | null>(null);
 
   async function registrationHandler(event: any) {
@@ -12,6 +15,11 @@ export default function NewsletterRegistration() {
     if (!isValidateEmail(email))
       return alert('이메일을 정확하게 입력해주세요.');
 
+    showNotification({
+      title: 'Signing up...',
+      message: 'Registering for newsletter!',
+      status: 'pending',
+    });
     try {
       const response = await fetch('/api/newsletter', {
         method: 'POST',
@@ -21,11 +29,19 @@ export default function NewsletterRegistration() {
         body: JSON.stringify({ email }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-      console.log(data.message);
+      if (!response.ok) throw new Error(data.message || 'Something went wrong');
+      showNotification({
+        title: 'Success!',
+        message: 'Successfully registered for newsletter!',
+        status: 'success',
+      });
     } catch (error: any) {
       console.log(error.message);
-      alert('에러가 발생하였습니다.');
+      showNotification({
+        title: 'Error!',
+        message: 'Registering newsletter failed!',
+        status: 'error',
+      });
     }
   }
 

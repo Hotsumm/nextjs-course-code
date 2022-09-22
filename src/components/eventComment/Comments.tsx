@@ -29,7 +29,7 @@ export default function Comments({ eventId }: CommentsProps) {
         body: JSON.stringify({ commentData }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
+      if (!response.ok) throw new Error(data.message || 'Something went wrong');
 
       if (!comments) return;
       setComments([...comments, data.newComment]);
@@ -43,7 +43,7 @@ export default function Comments({ eventId }: CommentsProps) {
     try {
       const response: any = await fetch(`/api/comment/${eventId}`);
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
+      if (!response.ok) throw new Error(data.message || 'Something went wrong');
 
       const commentList: CommentType[] = data.commentList;
       setComments(commentList);
