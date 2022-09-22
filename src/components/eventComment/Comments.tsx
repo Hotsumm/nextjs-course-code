@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 
 import CommentList from './CommentList';
 import NewComment from './NewComment';
+import NotificationContext from '../../../store/NotificationContext';
 import classes from './Comments.module.css';
 import { CommentType, CommentDataType } from '../../types/comment';
 
@@ -14,12 +15,18 @@ export default function Comments({ eventId }: CommentsProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
   const [comments, setComments] = useState<CommentType[]>([]);
+  const { showNotification } = useContext(NotificationContext);
 
   function toggleCommentsHandler() {
     setShowComments((prevStatus) => !prevStatus);
   }
 
   async function addCommentHandler(commentData: CommentDataType) {
+    showNotification({
+      title: 'Posting...',
+      message: 'Posting for comment!',
+      status: 'pending',
+    });
     try {
       const response = await fetch(`/api/comment/${eventId}`, {
         method: 'POST',
@@ -33,9 +40,18 @@ export default function Comments({ eventId }: CommentsProps) {
 
       if (!comments) return;
       setComments([...comments, data.newComment]);
+      showNotification({
+        title: 'Success!',
+        message: 'Successfully posted for comment!',
+        status: 'success',
+      });
     } catch (error: any) {
       console.log(error.message);
-      alert('댓글 작성에 실패하였습니다.');
+      showNotification({
+        title: 'Error!',
+        message: error.message || 'Posting comment failed!',
+        status: 'error',
+      });
     }
   }
 
