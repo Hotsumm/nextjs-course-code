@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NotificationContext from '../../../store/NotificationContext';
 import { NotificationType } from '../../types/notification';
 
@@ -25,6 +25,22 @@ export default function NotificationContextProvider({
     showNotification: handleShowNotification,
     hideNotification: handleHideNotification,
   };
+
+  useEffect(() => {
+    if (
+      activeNotification &&
+      (activeNotification.status === 'error' ||
+        activeNotification.status === 'success')
+    ) {
+      const timer = setTimeout(() => {
+        handleHideNotification();
+      }, 2000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [activeNotification]);
 
   return (
     <NotificationContext.Provider value={context}>
